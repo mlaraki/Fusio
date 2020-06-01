@@ -1,0 +1,16 @@
+.searchBar-input {
+	opacity: 0.8;
+}
+
+.searchBar-container {
+	max-width: 665px;
+	min-height: 10vh;
+	margin: 0 auto 4vh auto;
+}
+
+.searchBar {
+	margin-top: 2vh;
+	display: block;
+	border-color: #333333;
+	font-size: 1.14em;
+}
