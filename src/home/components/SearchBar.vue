@@ -85,9 +85,8 @@ export default {
   },
   watch: {
     searchTerm: function(val) {
-      if (val.charAt(0) == "!" && !val.includes(" ")) {
+      if (val.charAt(0) == "!") {
         if (this.searchTerm == "!") {
-          //TODO: add chill if chill mode activated
           this.helper = this.getters_mode == "Dev" ? dev_bangs : chill_bangs;
           this.displayHelper = true;
         } else this.searchJson(val);
