@@ -16,6 +16,9 @@ new Vue({
 	beforeCreate() {
 		this.$store.commit('initialiseStore');
 	},
+	mounted(){
+		document.getElementById("searchBar-input").focus();
+	},
 	render: h => h(App)
 });
 

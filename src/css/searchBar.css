@@ -1,5 +1,6 @@
 .searchBar-input {
 	opacity: 0.8;
+	display : flex !important;
 }
 
 .searchBar-container {
@@ -13,4 +14,13 @@
 	display: block;
 	border-color: #333333;
 	font-size: 1.14em;
+}
+
+.bang_result {
+	display: grid;
+	grid-template-columns: 38% 31% 31%;
+}
+
+.none {
+	display: none;
 }

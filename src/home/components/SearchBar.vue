@@ -1,33 +1,33 @@
 <template>
   <div class="searchBar-container">
     <form class="searchBar" @submit.prevent="handleSubmit" method="get">
-      <el-input
+      <el-autocomplete
         id="searchBar-input"
         class="searchBar-input"
+        :popper-class="compute_popper_class"
         prefix-icon="el-icon-search"
         clearable
         v-model="searchTerm"
-      ></el-input>
-      <el-card class="bang-card" v-if="displayHelper && helper" shadow="never">
-        <el-card
-          class="bang-sub-card"
-          v-for="(bang, i) in helper"
-          :key="i"
-          @click.native="addShortcut(bang)"
-        >
-          <div>
-            <el-avatar
-              class="bang-image"
-              shape="square"
-              :alt="bang.s"
-              :src="`https://external-content.duckduckgo.com/i/${bang.d}.ico?imgFallback=/watrcoolr/img/search-suggestions_default.png`"
-              :size="16"
-            ></el-avatar>
+        :fetch-suggestions="querySearch"
+        placeholder="Type ! to use bangs"
+        @select="handleSelect"
+      >
+        <template slot-scope="{ item }">
+          <div class="bang_result">
+            <div>
+              <el-avatar
+                class="bang-image"
+                shape="square"
+                :alt="item.s"
+                :src="`https://external-content.duckduckgo.com/i/${item.d}.ico?imgFallback=/watrcoolr/img/search-suggestions_default.png`"
+                :size="20"
+              ></el-avatar>
+            </div>
+            <span>{{ item.s }}</span>
+            <span style="font-weight: bold; float:right; text-align : end">!{{item.t}}</span>
           </div>
-          <span>{{bang.s}}</span>
-          <span style="font-weight: bold; float:right">{{bang.t}}</span>
-        </el-card>
-      </el-card>
+        </template>
+      </el-autocomplete>
     </form>
   </div>
 </template>
@@ -44,15 +44,26 @@ export default {
     return {
       searchTerm: "",
       displayHelper: false,
-      helper: null,
+      helper: [],
       bangs_json: null,
-      bang: ""
+      bang: "",
     };
   },
   computed: {
-    ...mapGetters(["getters_mode"])
+    ...mapGetters(["getters_mode"]),
+    compute_popper_class: function () {
+      return !this.displayHelper ? "none" : "default";
+    },
   },
   methods: {
+    querySearch(searchTerm, cb) {
+      cb(this.helper);
+    },
+    handleSelect(item) {
+      this.searchTerm = "!" + item.t + " ";
+      document.getElementById("searchBar-input").focus();
+      this.displayHelper = false;
+    },
     handleSubmit() {
       if (this.searchTerm.charAt(0) == "!") this.handleBang();
       else this.openURL("https://www.google.com/search?q=" + this.searchTerm);
@@ -67,32 +78,33 @@ export default {
     openURL(url) {
       var win = window.open(url, "_self");
     },
-    searchJson: _.debounce(function(val) {
+    searchJson: _.debounce(function (val) {
       if (this.bangs_json == null) {
         let json = require("./sub-components/bangs_compressed.js");
         this.bangs_json = json.default;
       }
       let str = val.substr(1);
-      let res = this.bangs_json.filter(bang => bang.t.startsWith(str));
+      let res = this.bangs_json.filter((bang) => bang.t.startsWith(str));
       res.sort((a, b) => b.r - a.r);
       this.helper = res.slice(0, 6);
-    }, 200),
+    }, 100),
     addShortcut(bang) {
       this.searchTerm = "!" + bang.t + " ";
       document.getElementById("searchBar-input").focus();
       this.displayHelper = false;
-    }
+    },
   },
   watch: {
-    searchTerm: function(val) {
-      if (val.charAt(0) == "!") {
-        if (this.searchTerm == "!") {
-          this.helper = this.getters_mode == "Dev" ? dev_bangs : chill_bangs;
-          this.displayHelper = true;
-        } else this.searchJson(val);
-      } else this.displayHelper = false;
-    }
-  }
+    searchTerm: function (val) {
+      if (val.charAt(0) !== "!") {
+        return (this.displayHelper = false);
+      }
+      if (this.searchTerm == "!") {
+        this.helper = this.getters_mode == "Dev" ? dev_bangs : chill_bangs;
+        this.displayHelper = true;
+      } else this.searchJson(val);
+    },
+  },
 };
 </script>
 
