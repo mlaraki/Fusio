@@ -76,7 +76,7 @@ export default {
       this.openURL(`https://duckduckgo.com/?q=%21${search}&t=hj`);
     },
     openURL(url) {
-      var win = window.open(url, "_self");
+    	window.open(url, "_blank");
     },
     searchJson: _.debounce(function (val) {
       if (this.bangs_json == null) {

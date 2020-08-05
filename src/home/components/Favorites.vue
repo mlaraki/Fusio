@@ -12,7 +12,7 @@
           <div
             v-if="fav.type != 'add'"
             class="card-container"
-            @click="$window.open(fav.url, '_blank')"
+            @click="$window.open(fav.url, '_self')"
           >
             <el-card class="fav" shadow="hover">
               <div class="container-icon">
