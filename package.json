@@ -19,7 +19,7 @@
   "dependencies": {
     "element-ui": "^2.13.2",
     "firebase": "^7.14.6",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "vue": "^2.6.10",
     "vue-konami-code": "^1.0.0",
     "vuedraggable": "^2.23.2",
