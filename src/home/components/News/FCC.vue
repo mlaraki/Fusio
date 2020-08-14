@@ -1,5 +1,5 @@
 <template>
-  <div class="container-news">
+  <div class="container-news-FCC">
     <div v-if="loading" class="loading">
       <Loader />
     </div>
@@ -10,26 +10,7 @@
         v-infinite-scroll="getNews"
         :infinite-scroll-disabled="disabled"
       >
-        <el-card
-          v-for="article in news"
-          shadow="never"
-          :key="article.id"
-          style="margin: 0 auto 20px auto;; max-width : 300px; position : relative; cursor : pointer;"
-        >
-          <div class="sub-container" @click="$window.open(article.link, '_blank')">
-            <div class="article-image">
-              <el-image :src="article.image">
-                <div slot="placeholder" class="image-slot">
-                  <span class="dot">...</span>
-                </div>
-              </el-image>
-            </div>
-            <div class="title">
-              <h3># {{article.tag.charAt(0).toUpperCase() + article.tag.slice(1)}}</h3>
-              <div>{{article.title}}</div>
-            </div>
-          </div>
-        </el-card>
+        <Articles :news="news" :type="'FCC'" />
       </div>
       <Loader v-if="subLoading" style="display : flex; margin-bottom : 50px" />
     </div>
@@ -37,14 +18,15 @@
 </template>
 
 <script>
-import Loader from "./Loader";
+import Loader from "../Loader";
+import Articles from "./Articles";
 import { mapActions, mapGetters } from "vuex";
 import firebase from "@firebase/app";
 import "@firebase/firestore";
-import { db } from "../../../firebaseConfig";
+import { db } from "../../../../firebaseConfig";
 
 export default {
-  name: "News",
+  name: "FCC",
   data() {
     return {
       news: [],
@@ -52,17 +34,18 @@ export default {
       cursor: null,
       cursorDone: [],
       subLoading: false,
-      noMore: false
+      noMore: false,
     };
   },
   components: {
-    Loader
+    Loader,
+    Articles,
   },
   computed: {
     ...mapGetters(["getters_news", "getters_news_created_at"]),
     disabled() {
       return this.subLoading || this.noMore;
-    }
+    },
   },
   methods: {
     ...mapActions(["setNews", "setNewsCreatedAt"]),
@@ -83,21 +66,11 @@ export default {
     async getNews() {
       await this.getCursor();
       let time_since_last_fetched = Date.now() - this.getters_news_created_at;
-      //force fetch every 3hours
-      if (
-        time_since_last_fetched >= 21600000 &&
-        this.getters_news_created_at != null
-      ) {
-        this.news = this.getters_news;
-        this.cursor -= this.getters_news.length;
-        this.loading = false;
-      } else {
-        await this.getMoreNews();
-      }
+      await this.getMoreNews();
     },
     async getMoreNews() {
       try {
-        this.subLoading = true;
+		this.subLoading = true;
         this.cursor = await this.getNewsBash(this.cursor);
         this.subLoading = false;
       } catch (error) {
@@ -105,36 +78,41 @@ export default {
       }
     },
     async getNewsBash(from) {
-      if (this.cursor == 0){
-		this.noMore = true
-		return 0;
-	  }
+      if (this.cursor == 0) {
+        this.noMore = true;
+        return 0;
+      }
       try {
-		  console.log("from => " , from);
         let snap = await db
           .collection("chromeExtension-articles")
           .orderBy("uid", "desc")
           .startAt(from)
           .limit(6)
           .get();
-		let result = snap.docs.map(doc => doc.data()) || [];
-        if (result.length) this.news.push(...result);
+        let result = snap.docs.map((doc) => {
+			let art = doc.data();
+			art.type = 'FCC';
+			return art;
+		}) || [];
+        if (result.length) {
+			this.news.push(...result);
+		}
         this.setNewsCreatedAt();
         this.loading = false;
         return from - result.length;
       } catch (error) {
         console.log(error.message);
       }
-    }
+    },
   },
   watch: {
-    news: function(old, val) {
+    news: function (old, val) {
       this.setNews(val);
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="css" scoped>
-@import "../../css/news.css";
+@import "../../../css/news.css";
 </style>

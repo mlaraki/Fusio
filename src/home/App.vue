@@ -41,35 +41,35 @@ import { mapGetters, mapActions } from "vuex";
 import Logo from "./components/Logo";
 import SearchBar from "./components/SearchBar";
 import Favorites from "./components/Favorites";
-import News from "./components/News";
+import News from "./components/News/News";
 
 export default {
   components: {
     Logo,
     SearchBar,
     Favorites,
-    News
+    News,
   },
   data() {
     return {
-	  display: null
+      display: null,
     };
   },
-  created() {
-	chrome.runtime.onMessage.addListener(this.updateMode);
+  async created() {
+    chrome.runtime.onMessage.addListener(this.updateMode);
   },
   computed: {
-    ...mapGetters(["getters_mode_42"])
+    ...mapGetters(["getters_mode_42"]),
   },
   methods: {
-	...mapActions(["setMode"]),
+    ...mapActions(["setMode"]),
     updateMode({ mode = "Dev" }) {
       this.setMode(mode);
     },
     switchDisplay(type) {
       this.display == type ? (this.display = null) : (this.display = type);
-    }
-  }
+    },
+  },
 };
 </script>
 

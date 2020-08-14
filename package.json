@@ -1,6 +1,6 @@
 {
   "name": "Fusio",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Chrome extension that provide a Personnal dashboard",
   "author": "mlaraki <https://github.com/mlaraki>",
   "license": "MIT",
@@ -17,6 +17,7 @@
     "watch:dev": "cross-env HMR=true npm run build:dev -- --watch"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "element-ui": "^2.13.2",
     "firebase": "^7.14.6",
     "lodash": "^4.17.19",

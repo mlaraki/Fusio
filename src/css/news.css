@@ -1,12 +1,24 @@
 .container-news {
 	overflow: auto;
 	height: 75vh;
+	display: flex;
+	justify-content: center;
+}
+
+.container-news-FCC {
+	overflow: auto;
+	height: 75vh;
 }
 
 .container-articles {
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
+}
+
+.nav-news{
+	position: fixed;
+	min-width: 628px;
 }
 
 .container-articles-list {
@@ -16,10 +28,25 @@
 	justify-content: center;
 }
 
+.container-fav {
+    position: absolute;
+    right: 5px;
+	top: 5px;
+	z-index: 1;
+}
+.fav_icon {
+	font-size: 18px;
+	color : #cfcc3df0
+}
 @media screen and (max-width: 650px) {
 	.container-articles-list {
 		grid-template-columns: auto;
 	}
+	.nav-news{
+		position: fixed;
+		min-width: 310px;
+	}
+	
 }
 
 .image-article {
