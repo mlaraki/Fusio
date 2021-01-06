@@ -17,7 +17,7 @@
     "watch:dev": "cross-env HMR=true npm run build:dev -- --watch"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "element-ui": "^2.13.2",
     "firebase": "^7.14.6",
     "lodash": "^4.17.19",
